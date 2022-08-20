@@ -3,7 +3,10 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/androidProjects/projects/ClubOlimpus/app/src/main/res/drawable/ic_baseline_person_add_24.xml" value="0.346" />
+        <entry key="..\:/androidProjects/projects/ClubOlimpus/app/src/main/res/layout/activity_add_member.xml" value="0.32608695652173914" />
         <entry key="..\:/androidProjects/projects/ClubOlimpus/app/src/main/res/layout/activity_main.xml" value="0.32608695652173914" />
+        <entry key="..\:/androidProjects/projects/ClubOlimpus/app/src/main/res/menu/edit_member_menu.xml" value="0.25" />
       </map>
     </option>
   </component>
