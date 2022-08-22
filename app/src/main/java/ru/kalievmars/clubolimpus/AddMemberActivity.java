@@ -4,6 +4,9 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.NavUtils;
 
+import android.content.ContentResolver;
+import android.content.ContentValues;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -12,18 +15,20 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.Spinner;
+import android.widget.Toast;
 
-import ru.kalievmars.clubolimpus.data.ClubOlimpusContract;
+import ru.kalievmars.clubolimpus.data.ClubOlimpusContract.*;
 import ru.kalievmars.clubolimpus.data.ClubOlimpusContract.Gender;
+import ru.kalievmars.clubolimpus.models.Member;
 
 public class AddMemberActivity extends AppCompatActivity {
 
     EditText firstNameEditText;
     EditText lastNameEditText;
     EditText groupEditText;
+    Gender gender;
     Spinner genderSpinner;
     ArrayAdapter<CharSequence> arrayAdapter;
-    Gender gender;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -83,6 +88,7 @@ public class AddMemberActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()) {
             case R.id.save_member:
+                insertMember();
                 return true;
             case R.id.delete_member:
                 return true;
@@ -91,4 +97,26 @@ public class AddMemberActivity extends AppCompatActivity {
         }
         return super.onOptionsItemSelected(item);
     }
+
+    public void insertMember() {
+        String firstname = firstNameEditText.getText().toString().trim();
+        String lastName = lastNameEditText.getText().toString().trim();
+        String sport = groupEditText.getText().toString().trim();
+
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(MemberEntry.KEY_FIRSTNAME, firstname);
+        contentValues.put(MemberEntry.KEY_LASTNAME, lastName);
+        contentValues.put(MemberEntry.KEY_GENDER, gender.ordinal());
+        contentValues.put(MemberEntry.KEY_GROUP, sport);
+
+        ContentResolver contentResolver = getContentResolver();
+        Uri uri = contentResolver.insert(MemberEntry.CONTENT_URI, contentValues);
+
+        if(uri == null) {
+            Toast.makeText(this, "Can't insert in URI", Toast.LENGTH_SHORT).show();
+        } else {
+            Toast.makeText(this, "Insert was success", Toast.LENGTH_SHORT).show();
+        }
+    }
+
 }

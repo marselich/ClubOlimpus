@@ -21,6 +21,10 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <provider
+            android:authorities="ru.kalievmars.clubolimpus"
+            android:name=".data.OlimpusContentProvider"
+            android:exported="false"/>
     </application>
 
 </manifest>
