@@ -58,7 +58,7 @@ public class OlimpusContentProvider extends ContentProvider {
         }
 
 
-
+        cursor.setNotificationUri(getContext().getContentResolver(), uri);
         return cursor;
     }
 
@@ -77,6 +77,8 @@ public class OlimpusContentProvider extends ContentProvider {
             case MEMBERS_CODE:
                 long id = db.insert(MemberEntry.TABLE_NAME, null, values);
 
+                getContext().getContentResolver().notifyChange(uri, null);
+
                 return ContentUris.withAppendedId(MemberEntry.CONTENT_URI, id);
             default:
                 throw new IllegalArgumentException("Can't insert URI " + uri);
@@ -90,38 +92,56 @@ public class OlimpusContentProvider extends ContentProvider {
 
         int match = uriMatcher.match(uri);
 
+        int rowsUpdated;
+
         switch (match) {
             case MEMBERS_CODE:
-                return db.delete(MemberEntry.TABLE_NAME, selection, selectionArgs);
+                rowsUpdated = db.delete(MemberEntry.TABLE_NAME, selection, selectionArgs);
+                break;
             case MEMBER_ID_CODE:
                 selection = MemberEntry.KEY_ID + "=?";
                 selectionArgs = new String[]{String.valueOf(ContentUris.parseId(uri))};
-                return db.delete(MemberEntry.TABLE_NAME, selection, selectionArgs);
+                rowsUpdated = db.delete(MemberEntry.TABLE_NAME, selection, selectionArgs);
+                break;
             default:
                 throw new IllegalArgumentException("Can't delete URI " + uri);
         }
+
+        if(rowsUpdated != 0) {
+            getContext().getContentResolver().notifyChange(uri, null);
+        }
+        return rowsUpdated;
     }
 
     @Override
     public int update(@NonNull Uri uri, @Nullable ContentValues values, @Nullable String selection, @Nullable String[] selectionArgs) {
 
-        assert values != null;
         validateColumns(values);
 
         SQLiteDatabase db = olimpusDBOpenHelper.getWritableDatabase();
 
         int match = uriMatcher.match(uri);
 
+        int rowsUpdated;
+
         switch (match) {
             case MEMBERS_CODE:
-                return db.update(MemberEntry.TABLE_NAME, values, selection, selectionArgs);
+                rowsUpdated = db.update(MemberEntry.TABLE_NAME, values, selection, selectionArgs);
+
+                break;
             case MEMBER_ID_CODE:
                 selection = MemberEntry.KEY_ID + "=?";
                 selectionArgs = new String[]{String.valueOf(ContentUris.parseId(uri))};
-                return db.update(MemberEntry.TABLE_NAME, values, selection, selectionArgs);
+                rowsUpdated = db.update(MemberEntry.TABLE_NAME, values, selection, selectionArgs);
+                break;
             default:
                 throw new IllegalArgumentException("Can't update URI " + uri);
         }
+
+        if(rowsUpdated != 0) {
+            getContext().getContentResolver().notifyChange(uri, null);
+        }
+        return rowsUpdated;
     }
 
     @Nullable
